@@ -51,9 +51,8 @@ public partial struct PlayerControllerSystem : ISystem
 
         void Execute(Entity entity, ref PlayerController playerController, ref LocalTransform localTransform)
         {
-            Debug.Log("Uora ma minu ueue");
             localTransform.Position += new float3((-left + right) * playerController.speed * DeltaTime, jump * playerController.speed * DeltaTime, (-backward + forward) * playerController.speed * DeltaTime);
-
+            //Debug.Log(PlayerSingleton.Instance.transform.position);
             //transportation.position.x = DeltaTime * transportation.speed;
             //localTransform.Position.x += transportation.position.x;
         }
