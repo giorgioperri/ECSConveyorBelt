@@ -29,6 +29,7 @@ public partial struct SingleBeltSystem : ISystem
         {
             SingleBeltData = SystemAPI.GetComponentLookup<SingleBelt>(),
             PhysicsVelocityData = SystemAPI.GetComponentLookup<PhysicsVelocity>(),
+            BeltChildData = SystemAPI.GetComponentLookup<BeltChild>(),
         }.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
     }
 
@@ -36,6 +37,7 @@ public partial struct SingleBeltSystem : ISystem
     struct CollisionEventConveyJob : ICollisionEventsJob
     {
         [ReadOnly] public ComponentLookup<SingleBelt> SingleBeltData;
+        public ComponentLookup<BeltChild> BeltChildData;
         public ComponentLookup<PhysicsVelocity> PhysicsVelocityData;
 
         public void Execute(CollisionEvent collisionEvent)
@@ -49,7 +51,10 @@ public partial struct SingleBeltSystem : ISystem
             bool isBodyAConveyor = SingleBeltData.HasComponent(entityA);
             bool isBodyBConveyor = SingleBeltData.HasComponent(entityB);
 
-            if (isBodyAConveyor && isBodyBDynamic)
+            bool isBodyAChild = BeltChildData.HasComponent(entityA);
+            bool isBodyBChild = BeltChildData.HasComponent(entityB);
+
+            if (isBodyAConveyor && isBodyBDynamic && !isBodyAChild)
             {
                 var impulseComponent = SingleBeltData[entityA];
                 var velocityComponent = PhysicsVelocityData[entityB];
@@ -57,7 +62,7 @@ public partial struct SingleBeltSystem : ISystem
                 PhysicsVelocityData[entityB] = velocityComponent;
             }
 
-            if (isBodyBConveyor && isBodyADynamic)
+            if (isBodyBConveyor && isBodyADynamic && !isBodyBChild)
             {
                 var impulseComponent = SingleBeltData[entityB];
                 var velocityComponent = PhysicsVelocityData[entityA];
