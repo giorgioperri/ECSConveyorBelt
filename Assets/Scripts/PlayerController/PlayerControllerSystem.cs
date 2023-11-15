@@ -56,7 +56,10 @@ public partial struct PlayerControllerSystem : ISystem
 
         void Execute(Entity entity, ref PlayerController playerController, ref LocalTransform localTransform)
         {
-            localTransform.Position += new float3((-left + right) * playerController.speed * DeltaTime, (-drop + jump) * playerController.speed * DeltaTime, (-backward + forward) * playerController.speed * DeltaTime);
+            //float3 unrotateMov = new float3((-left + right) * playerController.speed * DeltaTime, (-drop + jump) * playerController.speed * DeltaTime, (-backward + forward) * playerController.speed * DeltaTime);
+            //float3 rotatedMov = localTransform.Forward() * unrotateMov;
+
+            //localTransform.Position += localTransform.Forward() * (4 * forward);
             localTransform.Rotation = new float4(localTransform.Rotation.value.x + rotateX, localTransform.Rotation.value.y + rotateY, localTransform.Rotation.value.z, localTransform.Rotation.value.w);
             //Debug.Log(PlayerSingleton.Instance.transform.position);
             //transportation.position.x = DeltaTime * transportation.speed;
