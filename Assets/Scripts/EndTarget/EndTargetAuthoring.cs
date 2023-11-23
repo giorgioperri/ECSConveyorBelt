@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
 
-public class ConveyableObjectAuthoring : MonoBehaviour
+public class EndTargetAuthoring : MonoBehaviour
 {
     public int id;
-    public class ConveyableObjectBaker : Baker<ConveyableObjectAuthoring>
+    public class EndTargetBaker : Baker<EndTargetAuthoring>
     {
-        public override void Bake(ConveyableObjectAuthoring authoring)
+        public override void Bake(EndTargetAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent(entity, new ConveyableObject()
+            AddComponent(entity, new EndTarget()
             {
                 id = authoring.id
             });
