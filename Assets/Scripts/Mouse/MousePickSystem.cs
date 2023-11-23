@@ -20,9 +20,6 @@ namespace Unity.Physics.Extensions
         public struct SpringData
         {
             public Entity Entity;
-            public bool Dragging;
-            public float3 PointOnBody;
-            public float MouseDepth;
         }
 
         public MousePickSystem()
@@ -46,9 +43,10 @@ namespace Unity.Physics.Extensions
         {
             if (Input.GetMouseButtonDown(0) && (Camera.main != null))
             {
-                Vector2 mousePosition = Input.mousePosition;
-                UnityEngine.Ray unityRay = Camera.main.ScreenPointToRay(mousePosition);
+                //Vector2 mousePosition = Input.mousePosition;
+                //UnityEngine.Ray unityRay = Camera.main.ScreenPointToRay(mousePosition);
 
+                UnityEngine.Ray unityRay = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
                 var world = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
 
                 // Schedule picking job, after the collision world has been built
@@ -99,26 +97,11 @@ namespace Unity.Physics.Extensions
 
                 if (CollisionWorld.CastRay(RayInput, ref mousePickCollector))
                 {
-                    float fraction = mousePickCollector.Hit.Fraction;
                     RigidBody hitBody = CollisionWorld.Bodies[mousePickCollector.Hit.RigidBodyIndex];
-
-                    Math.MTransform bodyFromWorld = Math.Inverse(new Math.MTransform(hitBody.WorldFromBody));
-                    float3 pointOnBody = Math.Mul(bodyFromWorld, mousePickCollector.Hit.Position);
 
                     SpringDataRef.Value = new SpringData
                     {
                         Entity = hitBody.Entity,
-                        Dragging = true,
-                        PointOnBody = pointOnBody,
-                        MouseDepth = Near + math.dot(math.normalize(RayInput.End - RayInput.Start), Forward) *
-                            fraction * k_MaxDistance,
-                    };
-                }
-                else
-                {
-                    SpringDataRef.Value = new SpringData
-                    {
-                        Dragging = false
                     };
                 }
             }
