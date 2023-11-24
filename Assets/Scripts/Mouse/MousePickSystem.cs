@@ -5,7 +5,9 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Physics.Systems;
+using Unity.Transforms;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 namespace Unity.Physics.Extensions
 {
@@ -14,22 +16,17 @@ namespace Unity.Physics.Extensions
     public partial class MousePickSystem : SystemBase
     {
         public const float k_MaxDistance = 100.0f;
-        public NativeReference<SpringData> SpringDataRef;
+        public NativeReference<RotationData> RotationDataRef;
         public JobHandle? PickJobHandle;
 
-        public struct SpringData
-        {
-            public Entity Entity;
-            public bool Dragging;
-            public float3 PointOnBody;
-            public float MouseDepth;
-        }
+        public struct RotationData
+        { }
 
         public MousePickSystem()
         {
-            SpringDataRef =
-                new NativeReference<SpringData>(Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            SpringDataRef.Value = new SpringData();
+            RotationDataRef =
+                new NativeReference<RotationData>(Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+            RotationDataRef.Value = new RotationData();
         }
 
         protected override void OnCreate()
@@ -39,15 +36,14 @@ namespace Unity.Physics.Extensions
 
         protected override void OnDestroy()
         {
-            SpringDataRef.Dispose();
+            RotationDataRef.Dispose();
         }
 
         protected override void OnUpdate()
         {
             if (Input.GetMouseButtonDown(0) && (Camera.main != null))
             {
-                Vector2 mousePosition = Input.mousePosition;
-                UnityEngine.Ray unityRay = Camera.main.ScreenPointToRay(mousePosition);
+                UnityEngine.Ray unityRay = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
                 var world = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
 
@@ -55,7 +51,7 @@ namespace Unity.Physics.Extensions
                 Dependency = new Pick
                 {
                     CollisionWorld = world.CollisionWorld,
-                    SpringDataRef = SpringDataRef,
+                    RotationDataRef = RotationDataRef,
                     RayInput = new RaycastInput
                     {
                         Start = unityRay.origin,
@@ -65,6 +61,7 @@ namespace Unity.Physics.Extensions
                     Near = Camera.main.nearClipPlane,
                     Forward = Camera.main.transform.forward,
                     IgnoreTriggers = SystemAPI.GetSingleton<MousePick>().IgnoreTriggers,
+                    LocalTransformData = SystemAPI.GetComponentLookup<LocalTransform>()
                 }.Schedule(Dependency);
 
                 PickJobHandle = Dependency;
@@ -77,7 +74,7 @@ namespace Unity.Physics.Extensions
                     PickJobHandle.Value.Complete();
                 }
 
-                SpringDataRef.Value = new SpringData();
+                RotationDataRef.Value = new RotationData();
             }
         }
 
@@ -85,11 +82,13 @@ namespace Unity.Physics.Extensions
         struct Pick : IJob
         {
             [ReadOnly] public CollisionWorld CollisionWorld;
-            public NativeReference<SpringData> SpringDataRef;
+            public NativeReference<RotationData> RotationDataRef;
             public RaycastInput RayInput;
             public float Near;
             public float3 Forward;
             [ReadOnly] public bool IgnoreTriggers;
+
+            public ComponentLookup<LocalTransform> LocalTransformData;
 
             public void Execute()
             {
@@ -99,27 +98,17 @@ namespace Unity.Physics.Extensions
 
                 if (CollisionWorld.CastRay(RayInput, ref mousePickCollector))
                 {
-                    float fraction = mousePickCollector.Hit.Fraction;
                     RigidBody hitBody = CollisionWorld.Bodies[mousePickCollector.Hit.RigidBodyIndex];
 
-                    Math.MTransform bodyFromWorld = Math.Inverse(new Math.MTransform(hitBody.WorldFromBody));
-                    float3 pointOnBody = Math.Mul(bodyFromWorld, mousePickCollector.Hit.Position);
+                    Debug.Log(hitBody.Entity.Index);
+                    
+                    LocalTransformData[hitBody.Entity] = new LocalTransform
+                    {
+                        Position = LocalTransformData[hitBody.Entity].Position,
+                        Rotation = math.mul(LocalTransformData[hitBody.Entity].Rotation, quaternion.RotateY(math.radians(90))),
+                        Scale = LocalTransformData[hitBody.Entity].Scale
+                    };
 
-                    SpringDataRef.Value = new SpringData
-                    {
-                        Entity = hitBody.Entity,
-                        Dragging = true,
-                        PointOnBody = pointOnBody,
-                        MouseDepth = Near + math.dot(math.normalize(RayInput.End - RayInput.Start), Forward) *
-                            fraction * k_MaxDistance,
-                    };
-                }
-                else
-                {
-                    SpringDataRef.Value = new SpringData
-                    {
-                        Dragging = false
-                    };
                 }
             }
         }

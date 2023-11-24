@@ -431,6 +431,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HoverRotatableSingleBelt
       objectReference: {fileID: 0}
+    - target: {fileID: 1796083454744452592, guid: 365f4028aa9680b459905c59bc27e369, type: 3}
+      propertyPath: m_MotionType
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2845757662144184688, guid: 365f4028aa9680b459905c59bc27e369, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.13

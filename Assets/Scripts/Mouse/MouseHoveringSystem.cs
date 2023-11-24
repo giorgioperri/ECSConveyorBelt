@@ -52,7 +52,6 @@ namespace Unity.Physics.Extensions
                 };
                 rcj.Run();
                 hit = raycastHitRef.Value;
-                Debug.Log(hit.Entity.Index);
             }
 
             var graphicsEntity = FindGraphicsEntityFromPhysics(hit.Entity, hit.ColliderKey);
