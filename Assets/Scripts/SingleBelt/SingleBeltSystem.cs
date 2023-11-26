@@ -71,11 +71,10 @@ public partial struct SingleBeltSystem : ISystem
                 
                 bool horizontal = math.abs(impulseComponent.ConveyDirection.x) > math.abs(impulseComponent.ConveyDirection.z);
                 
-                float distanceCheck = !horizontal ? math.abs(impulseComponent.BeltCenter.x - LocalTransformData[entityA].Position.x) : math.abs(impulseComponent.BeltCenter.z - LocalTransformData[entityA].Position.z);
+                float distanceCheck = !horizontal 
+                    ? math.abs(impulseComponent.BeltCenter.x - LocalTransformData[entityA].Position.x) 
+                    : math.abs(impulseComponent.BeltCenter.z - LocalTransformData[entityA].Position.z);
 
-                //move the object towards the center of the belt using the difference between the object position and the belt center
-                // while also moving it towards the direction of the belt
-                
                 if (distanceCheck < 0.025f)
                 {
                     velocityComponent.Linear = impulseComponent.ConveyDirection;

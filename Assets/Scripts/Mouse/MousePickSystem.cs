@@ -61,7 +61,8 @@ namespace Unity.Physics.Extensions
                     Near = Camera.main.nearClipPlane,
                     Forward = Camera.main.transform.forward,
                     IgnoreTriggers = SystemAPI.GetSingleton<MousePick>().IgnoreTriggers,
-                    LocalTransformData = SystemAPI.GetComponentLookup<LocalTransform>()
+                    LocalTransformData = SystemAPI.GetComponentLookup<LocalTransform>(),
+                    SingleBeltData = SystemAPI.GetComponentLookup<SingleBelt>(),
                 }.Schedule(Dependency);
 
                 PickJobHandle = Dependency;
@@ -89,6 +90,7 @@ namespace Unity.Physics.Extensions
             [ReadOnly] public bool IgnoreTriggers;
 
             public ComponentLookup<LocalTransform> LocalTransformData;
+            public ComponentLookup<SingleBelt> SingleBeltData;
 
             public void Execute()
             {
@@ -99,8 +101,6 @@ namespace Unity.Physics.Extensions
                 if (CollisionWorld.CastRay(RayInput, ref mousePickCollector))
                 {
                     RigidBody hitBody = CollisionWorld.Bodies[mousePickCollector.Hit.RigidBodyIndex];
-
-                    Debug.Log(hitBody.Entity.Index);
                     
                     LocalTransformData[hitBody.Entity] = new LocalTransform
                     {
@@ -108,7 +108,17 @@ namespace Unity.Physics.Extensions
                         Rotation = math.mul(LocalTransformData[hitBody.Entity].Rotation, quaternion.RotateY(math.radians(90))),
                         Scale = LocalTransformData[hitBody.Entity].Scale
                     };
-
+                    
+                    if (SingleBeltData.HasComponent(hitBody.Entity))
+                    {
+                        Debug.Log(SingleBeltData[hitBody.Entity].ConveyDirection);
+                        SingleBeltData[hitBody.Entity] = new SingleBelt
+                        {
+                            //set the convey direction based on the object rotation's forward 
+                            ConveyDirection = math.forward(LocalTransformData[hitBody.Entity].Rotation),
+                            BeltCenter = SingleBeltData[hitBody.Entity].BeltCenter
+                        };
+                    }
                 }
             }
         }
