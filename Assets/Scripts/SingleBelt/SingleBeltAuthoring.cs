@@ -9,11 +9,13 @@ using Unity.Mathematics;
 public class SingleBeltAuthoring : MonoBehaviour
 {
     public float3 Direction;
+    public float3 BeltCenter;
 
     private void OnValidate()
     {
         //set the direction based on the object rotation
         Direction = transform.rotation * math.forward();
+        BeltCenter = transform.position;
     }
 
     public class SingleBeltBaker : Baker<SingleBeltAuthoring>
@@ -24,6 +26,7 @@ public class SingleBeltAuthoring : MonoBehaviour
             AddComponent(entity, new SingleBelt()
             {
                 ConveyDirection = authoring.Direction,
+                BeltCenter = authoring.BeltCenter
             });
         }
     }
