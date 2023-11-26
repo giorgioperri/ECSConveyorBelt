@@ -5,4 +5,5 @@ using UnityEngine;
 public struct SingleBelt : IComponentData
 {
     public float3 ConveyDirection;
+    public float3 BeltCenter;
 }
