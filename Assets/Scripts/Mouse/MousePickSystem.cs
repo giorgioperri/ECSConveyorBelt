@@ -111,7 +111,6 @@ namespace Unity.Physics.Extensions
                     
                     if (SingleBeltData.HasComponent(hitBody.Entity))
                     {
-                        Debug.Log(SingleBeltData[hitBody.Entity].ConveyDirection);
                         SingleBeltData[hitBody.Entity] = new SingleBelt
                         {
                             //set the convey direction based on the object rotation's forward 

@@ -64,8 +64,6 @@ public partial struct PlayerControllerSystem : ISystem
 
             float3 localMov = aheadMov * (-backward + forward) + sideMov * (-left + right) + flight;
 
-            //Debug.Log(requestedMovementDirection);
-
             localTransform.Position = localTransform.Position + localMov * playerController.speed;
             localTransform.Rotation.value.y = CameraTag.Instance.Rotation.y;
         }
