@@ -7,6 +7,7 @@ using Unity.Entities;
 public class ConveyableObjectAuthoring : MonoBehaviour
 {
     public int id;
+    public int repulsionForce;
     public class ConveyableObjectBaker : Baker<ConveyableObjectAuthoring>
     {
         public override void Bake(ConveyableObjectAuthoring authoring)
@@ -14,7 +15,8 @@ public class ConveyableObjectAuthoring : MonoBehaviour
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new ConveyableObject()
             {
-                id = authoring.id
+                id = authoring.id,
+                repulsionForce = authoring.repulsionForce,
             });
         }
     }

@@ -49,6 +49,8 @@ public partial struct SingleBeltSystem : ISystem
             Entity entityA = collisionEvent.EntityA;
             Entity entityB = collisionEvent.EntityB;
 
+            int repulsionForce = GameParameterManager.Instance.RepulsionForce;
+            
             bool isBodyAConveyable = ConveyableObjectData.HasComponent(entityA);
             bool isBodyBConveyable = ConveyableObjectData.HasComponent(entityB);
 
@@ -71,8 +73,8 @@ public partial struct SingleBeltSystem : ISystem
                 //the velocity of the 2 balls should be the different
                 
                 var random = new Random((uint) (ElapsedTime * 1000));
-                var randomX = random.NextFloat(-1f, 1f);
-                var randomZ = random.NextFloat(-1f, 1f);
+                var randomX = random.NextFloat(-repulsionForce, repulsionForce);
+                var randomZ = random.NextFloat(-repulsionForce, repulsionForce);
                 
                 velocityComponentA.Linear = new float3(randomX, 3f, randomZ);
                 velocityComponentB.Linear = new float3(-randomX, 3f, -randomZ);

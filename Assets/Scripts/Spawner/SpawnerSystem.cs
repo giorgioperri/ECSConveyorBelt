@@ -39,9 +39,9 @@ public partial struct SpawnerSystem : ISystem
 
         void Execute(Entity entity, ref Spawner spawner)
         {
-            spawner.timer += DeltaTime;
+            spawner.timer += DeltaTime * GameParameterManager.Instance.SpawnRate;
 
-            if (spawner.timer > spawner.maxTImer)
+            if (spawner.timer > 1)
             {
                 if (chance == 1)
                 {

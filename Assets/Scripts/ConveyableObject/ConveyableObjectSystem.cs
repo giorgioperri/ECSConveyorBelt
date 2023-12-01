@@ -77,7 +77,7 @@ public partial struct ConveyableObjectSystem : ISystem
 
                 if (distanceCheck < 0.025f)
                 {
-                    velocityComponent.Linear = impulseComponent.ConveyDirection;
+                    velocityComponent.Linear = impulseComponent.ConveyDirection * GameParameterManager.Instance.BeltSpeed;
                 }
                 else
                 {

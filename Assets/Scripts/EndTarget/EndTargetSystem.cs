@@ -67,11 +67,11 @@ public partial struct EndTargetSystem : ISystem
 
                 if(idEnd == idConveyable)
                 {
-                    Debug.Log("Good Destruction");
+                    GameParameterManager.Instance.Correct++;
                 }
                 else
                 {
-                    Debug.Log("Bad Destruction");
+                    GameParameterManager.Instance.Wrong++;
                 }
 
                 ECB.DestroyEntity(entityB);
@@ -84,11 +84,11 @@ public partial struct EndTargetSystem : ISystem
 
                 if (idEnd == idConveyable)
                 {
-                    Debug.Log("Good Destruction");
+                    GameParameterManager.Instance.Correct++;
                 }
                 else
                 {
-                    Debug.Log("Bad Destruction");
+                    GameParameterManager.Instance.Wrong++;
                 }
 
                 ECB.DestroyEntity(entityA);

@@ -65,13 +65,13 @@ namespace Unity.Physics.Extensions
             bool hasPreviousEntity = !mouseHover.PreviousEntity.Equals(Entity.Null);
             bool hasCurrentEntity = !mouseHover.CurrentEntity.Equals(Entity.Null);
 
-            if (hasPreviousEntity && EntityManager.HasComponent<MaterialMeshInfo>(mouseHover.PreviousEntity))
+            /*if (hasPreviousEntity && EntityManager.HasComponent<MaterialMeshInfo>(mouseHover.PreviousEntity))
             {
                 EntityManager.SetComponentData<MaterialMeshInfo>(mouseHover.PreviousEntity,
                     mouseHover.OriginalMeshInfo);
-            }
+            }*/
 
-            if (hasCurrentEntity && EntityManager.HasComponent<MaterialMeshInfo>(mouseHover.CurrentEntity) &&
+            /*if (hasCurrentEntity && EntityManager.HasComponent<MaterialMeshInfo>(mouseHover.CurrentEntity) &&
                 EntityManager.HasComponent<RenderMeshArray>(mouseHover.CurrentEntity))
             {
                 mouseHover.PreviousEntity = mouseHover.CurrentEntity;
@@ -83,7 +83,7 @@ namespace Unity.Physics.Extensions
                 newMeshInfo.Mesh = mouseHover.OriginalMeshInfo.Mesh;
 
                 EntityManager.SetComponentData<MaterialMeshInfo>(mouseHover.CurrentEntity, newMeshInfo);
-            }
+            }*/
 
             EntityManager.SetComponentData(mouseHoverEntity, mouseHover);
         }
